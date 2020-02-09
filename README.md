@@ -9,6 +9,7 @@ This POC demostrate how we could integrate a WinForms C# with LabVIEW using Acti
 * Install LINX Toolkit: firmware, blocks and examples to connect Arduino devices with Labview
 * Open Labview and install Arduino Mega LINX firmware to comunícate Labview with Arduino and follow the steps
     a. Tool -> MarkerHub -> LINX -> LINX firmware wizard
+![Arduino_01](https://user-images.githubusercontent.com/1216181/74112532-c4af6880-4b9d-11ea-9bcb-629671bcd49e.png)
 
 
 ![Captura](https://user-images.githubusercontent.com/1216181/74112392-91b8a500-4b9c-11ea-80f1-cec4453eaa88.PNG)
