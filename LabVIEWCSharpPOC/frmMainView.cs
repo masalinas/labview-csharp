@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
+using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +20,18 @@ namespace TresaVisualPOC
         private string labViewFile;
         private _Application labViewApp;
         private VirtualInstrument viApp;
+
+        private void InitComponents()
+        {
+            // load active ports
+            cbPorts.DataSource = SerialPort.GetPortNames();
+
+            // default internal digital Arduino pin LED
+            nuDigitalInput.Value = 13;
+
+            // default active cursor
+            btnBrowse.Cursor = Cursors.Hand;
+        }
 
         private void InitLabviewApplication()
         {
@@ -78,8 +91,8 @@ namespace TresaVisualPOC
 
             this.viApp.FPWinOpen = true;
 
-            this.viApp.SetControlValue("Serial Port", "COM3");
-            this.viApp.SetControlValue("Digital Output Channel", 13);
+            this.viApp.SetControlValue("Serial Port", cbPorts.Text);
+            this.viApp.SetControlValue("Digital Output Channel", nuDigitalInput.Value);
             this.viApp.SetControlValue("LED Value", 0);
             this.viApp.SetControlValue("Stop Button", 0);
 
@@ -91,7 +104,10 @@ namespace TresaVisualPOC
         {
             InitializeComponent();
 
-            // Initialize Labview Application
+            // Initialize Application components
+            InitComponents();
+
+            // Initialize Labview runtime
             InitLabviewApplication();
         }
 
@@ -124,6 +140,10 @@ namespace TresaVisualPOC
 
                 // enable switch button
                 btnSwitch.Enabled = true;
+                btnSwitch.Cursor = Cursors.Hand;
+
+                btnStop.Enabled = true;
+                btnStop.Cursor = Cursors.Hand;
 
                 // start vi labview application
                 StartViApplication();
@@ -135,7 +155,7 @@ namespace TresaVisualPOC
             if (btnSwitch.Text == "OFF")
             {
                 btnSwitch.Text = "ON";
-                btnSwitch.BackColor = Color.Green;
+                btnSwitch.BackColor = Color.YellowGreen;
 
                 this.viApp.SetControlValue("LED Value", 1);
             } else
@@ -149,15 +169,38 @@ namespace TresaVisualPOC
             txtLoopRate.Text = this.viApp.GetControlValue("Loop Rate (Hz)").ToString();
         }
 
+        private void nuDigitalInput_ValueChanged(object sender, EventArgs e)
+        {
+            if (this.viApp != null)
+                this.viApp.SetControlValue("Digital Output Channel", nuDigitalInput.Value);
+        }
+
         private void btnStop_Click(object sender, EventArgs e)
         {
             this.viApp.SetControlValue("Stop Button", 1);
+
+            btnStop.Enabled = false;
+            btnStop.Cursor = Cursors.Default;
+
+            btnStart.Enabled = !btnStop.Enabled;
+            btnStart.Cursor = Cursors.Hand;
+        }
+        private void btnStart_Click(object sender, EventArgs e)
+        {
+            this.viApp.Run(true);
+
+            btnStop.Enabled = true;
+            btnStop.Cursor = Cursors.Hand;
+
+            btnStart.Enabled = !btnStop.Enabled;
+            btnStart.Cursor = Cursors.Default;
         }
 
         private void frmMainView_FormClosed(object sender, FormClosedEventArgs e)
         {
             // stop vi labview application
-            this.viApp.SetControlValue("Stop Button", 1);
+            if (this.viApp != null)
+                this.viApp.SetControlValue("Stop Button", 1);
 
             // close labview runtime
             this.labViewApp.Quit();
