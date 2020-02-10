@@ -22,4 +22,4 @@ This POC demostrate how we could integrate a WinForms C# with LabVIEW using Acti
 
 # Execution
 
-![Captura](https://user-images.githubusercontent.com/1216181/74112392-91b8a500-4b9c-11ea-80f1-cec4453eaa88.PNG)
+![Captura](https://user-images.githubusercontent.com/1216181/74145820-07a22800-4c00-11ea-8e94-ee8308decd1c.PNG)
